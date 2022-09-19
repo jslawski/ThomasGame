@@ -6,10 +6,10 @@ public enum PlayerSegment { Top, Right, Bottom, Left }
 
 public class PlayerController : MonoBehaviour
 {    
-    private Rigidbody playerRb;
+    public Rigidbody playerRb;
 
     [SerializeField, Range(0, 50)]
-    private float moveSpeed;
+    public float moveSpeed;
 
     [SerializeField, Range(0, 10)]
     private float initialJumpForce = 0f;
