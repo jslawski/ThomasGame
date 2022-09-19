@@ -92,7 +92,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3104278802303086667}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 7f21fb43a6b535d46ae912ed350810df, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -111,6 +111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerSegmentColor: 2
+  segmentRenderer: {fileID: 0}
 --- !u!1 &4372621418584401576
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,7 +204,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4372621418584401576}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 7f21fb43a6b535d46ae912ed350810df, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -222,6 +223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerSegmentColor: 1
+  segmentRenderer: {fileID: 0}
 --- !u!1 &6118875649976307124
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,6 +287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3d762efde45f3a409fca5991fe4acec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerRb: {fileID: 0}
   moveSpeed: 5
   initialJumpForce: 0
   nudgeForce: 0
@@ -435,7 +438,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8681855269321785255}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 7f21fb43a6b535d46ae912ed350810df, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -454,6 +457,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerSegmentColor: 0
+  segmentRenderer: {fileID: 0}
 --- !u!1 &9207906499484711628
 GameObject:
   m_ObjectHideFlags: 0
@@ -546,7 +550,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9207906499484711628}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 7f21fb43a6b535d46ae912ed350810df, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -565,3 +569,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerSegmentColor: 3
+  segmentRenderer: {fileID: 0}

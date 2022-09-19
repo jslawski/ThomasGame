@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 moveVector;
 
+    private AudioObserver audioObserver;
+
     public void PrintStatus()
     {
         Debug.LogError("Top: " + this.segmentColors[PlayerSegment.Top] +
@@ -36,6 +38,8 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         CollisionObserver.SetupCollisionObserver();
+
+        this.audioObserver = GameObject.Find("AudioObserver").GetComponent<AudioObserver>();
     }
 
     // Start is called before the first frame update
@@ -77,12 +81,14 @@ public class PlayerController : MonoBehaviour
             ObjectColor newBottom = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Bottom] + incrementer) % 4);
             ObjectColor newLeft = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Left] + incrementer) % 4);
 
-            Debug.LogError("NewTop: " + newTop + "\nNewRight: " + newRight + "\nNewBottom: " + newBottom + "\nNewLeft: " + newLeft);
+            //Debug.LogError("NewTop: " + newTop + "\nNewRight: " + newRight + "\nNewBottom: " + newBottom + "\nNewLeft: " + newLeft);
 
             this.segmentColors[PlayerSegment.Top] = newTop;
             this.segmentColors[PlayerSegment.Right] = newRight;
             this.segmentColors[PlayerSegment.Bottom] = newBottom;
             this.segmentColors[PlayerSegment.Left] = newLeft;
+
+            this.audioObserver.NotifyAudioTrigger(AudioTrigger.Rotate);
         }
     }
 
@@ -150,6 +156,8 @@ public class PlayerController : MonoBehaviour
         }
 
         this.playerRb.useGravity = true;
+
+        Debug.LogError("Using Gravity: " + this.playerRb.useGravity);
     }
 
     private void FixedUpdate()
@@ -252,6 +260,8 @@ public class PlayerController : MonoBehaviour
     private void JumpPlayer(Vector3 direction)
     {
         this.playerRb.AddForce(direction * this.initialJumpForce, ForceMode.Impulse);
+        
+        this.audioObserver.NotifyAudioTrigger(AudioTrigger.Jump);
     }
 
     public void AttemptNudgePlayer()

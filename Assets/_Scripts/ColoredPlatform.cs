@@ -8,10 +8,14 @@ public class ColoredPlatform : MonoBehaviour
     public ObjectColor platformColor;
 
     private MeshRenderer platformRenderer;
+    
+    private AudioObserver audioObserver;
 
     private void Awake()
     {
         this.platformRenderer = GetComponent<MeshRenderer>();
+
+        this.audioObserver = GameObject.Find("AudioObserver").GetComponent<AudioObserver>();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -40,6 +44,12 @@ public class ColoredPlatform : MonoBehaviour
             {
                 playerSegment.segmentRenderer.material = activeMaterial;
                 this.platformRenderer.material = activeMaterial;
+
+                this.audioObserver.NotifyAudioTrigger(AudioTrigger.Attach);
+            }
+            else
+            {
+                this.audioObserver.NotifyAudioTrigger(AudioTrigger.Collide);
             }
         }
     }
@@ -62,6 +72,8 @@ public class ColoredPlatform : MonoBehaviour
             {
                 playerSegment.segmentRenderer.material = inactiveMaterial;
                 this.platformRenderer.material = inactiveMaterial;
+
+                this.audioObserver.NotifyAudioTrigger(AudioTrigger.Detach);
             }
         }
     }
