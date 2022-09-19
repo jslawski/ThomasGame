@@ -6,14 +6,26 @@ public enum PlayerSegment { Top, Right, Bottom, Left }
 
 public class PlayerController : MonoBehaviour
 {    
-    private KeyCode currentKey = KeyCode.None;
+    private KeyCode currentMoveKey = KeyCode.None;
 
     private Rigidbody playerRb;
 
     [SerializeField, Range(0, 50)]
     private float moveSpeed;
 
+    [SerializeField, Range(10, 50)]
+    private float jumpForce = 10;
+
     private Dictionary<PlayerSegment, ObjectColor> segmentColors;
+
+    private bool jumpNextFrame = false;
+
+    private Animator playerAnimator;
+
+    private void Awake()
+    {
+        CollisionObserver.SetupCollisionObserver();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -25,23 +37,38 @@ public class PlayerController : MonoBehaviour
         this.segmentColors.Add(PlayerSegment.Left, ObjectColor.Purple);
 
         this.playerRb = GetComponent<Rigidbody>();
+        this.playerAnimator = GetComponent<Animator>();
     }
 
-    private void RotatePlayerClockwise()
+    private void RotatePlayer(bool clockwise)
     {
-        ObjectColor newTop = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Left] + 1) % 4);
-        ObjectColor newRight = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Top] + 1) % 4);
-        ObjectColor newBottom = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Right] + 1) % 4);
-        ObjectColor newLeft = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Bottom] + 1) % 4);
+        int incrementer = 0;
+
+        if (clockwise == true)
+        {
+            this.playerAnimator.SetTrigger("RotateClockwise");
+            incrementer = 3;
+        }
+        else
+        {
+            this.playerAnimator.SetTrigger("RotateCounterClockwise");
+            incrementer = 1;
+        }
+
+        ObjectColor newTop = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Top] + incrementer) % 4);
+        ObjectColor newRight = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Right] + incrementer) % 4);
+        ObjectColor newBottom = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Bottom] + incrementer) % 4);
+        ObjectColor newLeft = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Left] + incrementer) % 4);
+
+        Debug.LogError("NewTop: " + newTop + "\nNewRight: " + newRight + "\nNewBottom: " + newBottom + "\nNewLeft: " + newLeft);
 
         this.segmentColors[PlayerSegment.Top] = newTop;
         this.segmentColors[PlayerSegment.Right] = newRight;
         this.segmentColors[PlayerSegment.Bottom] = newBottom;
         this.segmentColors[PlayerSegment.Left] = newLeft;
-
-        //Play animation here
     }
 
+    /*
     private void RotatePlayerCounterClockwise()
     {
         ObjectColor newTop = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Right] + 3) % 4);
@@ -56,7 +83,7 @@ public class PlayerController : MonoBehaviour
 
         //Play animation here
     }
-
+    */
     private KeyCode GetInput()
     {                
         //First, prioritize the latest new key press
@@ -76,15 +103,12 @@ public class PlayerController : MonoBehaviour
         {
             return KeyCode.S;
         }
-        else if (Input.GetKeyDown(KeyCode.Space))
-        {
-            return KeyCode.Space;
-        }
+
 
         //Next, prioritize the current key being pressed if it is still being held
-        if (Input.GetKey(this.currentKey))
+        if (Input.GetKey(this.currentMoveKey))
         {
-            return this.currentKey;
+            return this.currentMoveKey;
         }
 
         //Finally, check for any held keys
@@ -112,7 +136,20 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        this.currentKey = this.GetInput();
+        this.currentMoveKey = this.GetInput();
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            this.jumpNextFrame = true;
+        }
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            this.RotatePlayer(true);
+        }
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            this.RotatePlayer(false);
+        }
     }
 
     private void UpdateGravity()
@@ -134,16 +171,18 @@ public class PlayerController : MonoBehaviour
     {
         this.UpdateGravity();
         
-        if (this.currentKey != KeyCode.None)
+        if (this.currentMoveKey != KeyCode.None)
         {
-            if (this.currentKey != KeyCode.Space)
+            if (this.currentMoveKey != KeyCode.Space)
             {
                 this.AttemptMovePlayer();
-            }
-            else
-            {
-                this.AttemptJumpPlayer();
-            }
+            }            
+        }
+
+        if (this.jumpNextFrame == true)
+        {
+            this.AttemptJumpPlayer();
+            this.jumpNextFrame = false;
         }
     }
 
@@ -151,14 +190,23 @@ public class PlayerController : MonoBehaviour
     {
         //Up and down inputs are only valid if the left or right segment
         //is colliding with a matching color platform
-        if (this.currentKey == KeyCode.W || this.currentKey == KeyCode.S)
+        if (this.currentMoveKey == KeyCode.W || this.currentMoveKey == KeyCode.S)
         {
             return (CollisionObserver.ObjectIsCollidingWithMatchingPlatform(this.segmentColors[PlayerSegment.Left]) ||
                     CollisionObserver.ObjectIsCollidingWithMatchingPlatform(this.segmentColors[PlayerSegment.Right]));
         }
 
-        //Left and right inputs are always valid
-        return true;
+        //Left and right inputs are only valid if the top or bottom segment
+        //is colliding with a matching color platform
+        //OR the player is currently in the air/on the ground
+        if (this.currentMoveKey == KeyCode.A || this.currentMoveKey == KeyCode.D)
+        {
+            return (CollisionObserver.ObjectIsCollidingWithMatchingPlatform(this.segmentColors[PlayerSegment.Top]) ||
+                    CollisionObserver.ObjectIsCollidingWithMatchingPlatform(this.segmentColors[PlayerSegment.Bottom]) ||
+                    CollisionObserver.IsMatchingCollisionFree());
+        }
+
+        return false;
     }
 
     private void AttemptMovePlayer()
@@ -167,7 +215,7 @@ public class PlayerController : MonoBehaviour
 
         if (this.IsValidMove() == true)
         {
-            switch (this.currentKey)
+            switch (this.currentMoveKey)
             {
                 case KeyCode.A:
                     this.MovePlayer(Vector3.left);
@@ -194,7 +242,47 @@ public class PlayerController : MonoBehaviour
     }
 
     private void AttemptJumpPlayer()
-    { 
-        
+    {
+        Debug.LogError(this.segmentColors[PlayerSegment.Bottom]);
+
+
+        if (CollisionObserver.IsCollisionFree() == true)
+        {
+            return;
+        }
+
+        if (CollisionObserver.ObjectIsCollidingWithAnyPlatform(this.segmentColors[PlayerSegment.Bottom]))
+        {
+            this.JumpPlayer(Vector3.up);
+        }
+        else if (CollisionObserver.ObjectIsCollidingWithMatchingPlatform(this.segmentColors[PlayerSegment.Top]))
+        {
+            this.JumpPlayer(Vector3.down);
+        }
+        else if (CollisionObserver.ObjectIsCollidingWithMatchingPlatform(this.segmentColors[PlayerSegment.Right]))
+        {
+            this.JumpPlayer(Vector3.left);
+        }
+        else if (CollisionObserver.ObjectIsCollidingWithMatchingPlatform(this.segmentColors[PlayerSegment.Left]))
+        {
+            this.JumpPlayer(Vector3.right);
+        }
+    }
+
+    private void JumpPlayer(Vector3 direction)
+    {
+        this.playerRb.AddForce(direction * this.jumpForce, ForceMode.Impulse);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (CollisionObserver.IsMatchingCollisionFree())
+        {
+            this.playerRb.velocity = new Vector3(0.0f, this.playerRb.velocity.y, 0.0f);
+        }
+        else
+        {
+            this.playerRb.velocity = new Vector3(0.0f, 0.0f, 0.0f);
+        }
     }
 }

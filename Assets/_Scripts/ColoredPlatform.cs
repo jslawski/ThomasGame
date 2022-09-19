@@ -21,7 +21,7 @@ public class ColoredPlatform : MonoBehaviour
             CollisionObserver.NotifyCollisionChange(this.platformColor, segmentColor, true);
         }
         
-        Debug.LogError(this.gameObject.name + " collides with " +collision.collider.gameObject.name);
+        //Debug.LogError(this.gameObject.name + " collides with " +collision.collider.gameObject.name);
     }
 
     private void OnCollisionExit(Collision collision)
@@ -32,6 +32,6 @@ public class ColoredPlatform : MonoBehaviour
             CollisionObserver.NotifyCollisionChange(this.platformColor, segmentColor, false);
         }
 
-        Debug.LogError(this.gameObject.name + " EXITS " + collision.collider.gameObject.name);
+        //Debug.LogError(this.gameObject.name + " EXITS " + collision.collider.gameObject.name);
     }
 }
