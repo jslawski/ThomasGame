@@ -132,7 +132,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1718674461, guid: 30596710887f8cd48b5086dd0c857dc5, type: 3}
       propertyPath: nudgeForce
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1718674461, guid: 30596710887f8cd48b5086dd0c857dc5, type: 3}
       propertyPath: initialJumpForce
