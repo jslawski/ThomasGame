@@ -11,12 +11,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Range(0, 50)]
     private float moveSpeed;
 
-
+    private CollisionObserver collisionObserver;
 
     // Start is called before the first frame update
     void Start()
     {
         this.playerRb = GetComponent<Rigidbody>();
+
+        this.collisionObserver = GameObject.Find("CollisionObserver").GetComponent<CollisionObserver>();
     }
 
     private KeyCode GetInput()
@@ -75,7 +77,6 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         this.currentKey = this.GetInput();
-
     }
 
     private void FixedUpdate()
@@ -92,8 +93,6 @@ public class PlayerController : MonoBehaviour
     private void AttemptMovePlayer()
     {
         Vector3 finalDirection = Vector3.zero;
-        
-
 
         switch (this.currentKey)
         {
