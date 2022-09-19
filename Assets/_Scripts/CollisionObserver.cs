@@ -58,14 +58,15 @@ public static class CollisionObserver
                 CollisionObserver.genericCollisionDict[ObjectColor.Purple] == false);
     }
 
-    public static void NotifyCollisionChange(ObjectColor platformColor, ObjectColor playerSegmentColor, bool currentlyColliding)
+    public static void NotifyCollisionChange(ObjectColor platformColor, ObjectColor playerSegmentColor, 
+                                             bool currentlyColliding, bool isGeneric = false)
     {        
         if (currentlyColliding == false)
         {
             CollisionObserver.matchingColorCollisionDict[playerSegmentColor] = false;
             CollisionObserver.genericCollisionDict[playerSegmentColor] = false;
         }
-        else if (platformColor == playerSegmentColor)
+        else if (isGeneric == false && platformColor == playerSegmentColor)
         {
             CollisionObserver.matchingColorCollisionDict[playerSegmentColor] = true;
             CollisionObserver.genericCollisionDict[playerSegmentColor] = true;
@@ -75,5 +76,5 @@ public static class CollisionObserver
             CollisionObserver.matchingColorCollisionDict[playerSegmentColor] = false;
             CollisionObserver.genericCollisionDict[playerSegmentColor] = true;
         }
-    }
+    }    
 }

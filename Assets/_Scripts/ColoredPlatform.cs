@@ -11,6 +11,9 @@ public class ColoredPlatform : MonoBehaviour
     
     private AudioObserver audioObserver;
 
+    [SerializeField]
+    private bool isGeneric = false;
+
     private void Awake()
     {
         this.platformRenderer = GetComponent<MeshRenderer>();
@@ -23,7 +26,8 @@ public class ColoredPlatform : MonoBehaviour
         if (collision.collider.gameObject.tag == "Player")
         {
             ObjectColor segmentColor = collision.collider.gameObject.GetComponent<ColoredPlayerSegment>().playerSegmentColor;
-            CollisionObserver.NotifyCollisionChange(this.platformColor, segmentColor, true);
+
+            CollisionObserver.NotifyCollisionChange(this.platformColor, segmentColor, true, this.isGeneric);
 
             Rigidbody playerRb = collision.gameObject.GetComponent<Rigidbody>();
 
@@ -40,7 +44,7 @@ public class ColoredPlatform : MonoBehaviour
 
             Material activeMaterial = Resources.Load<Material>("Materials/" + playerSegment.playerSegmentColor.ToString() + "/active");
 
-            if (this.platformColor == playerSegment.playerSegmentColor)
+            if (this.isGeneric == false && this.platformColor == playerSegment.playerSegmentColor)
             {
                 playerSegment.segmentRenderer.material = activeMaterial;
                 this.platformRenderer.material = activeMaterial;
@@ -68,7 +72,7 @@ public class ColoredPlatform : MonoBehaviour
             Material inactiveMaterial = Resources.Load<Material>("Materials/" + playerSegment.playerSegmentColor.ToString() + "/inactive");
 
 
-            if (this.platformColor == playerSegment.playerSegmentColor)
+            if (this.isGeneric == false && this.platformColor == playerSegment.playerSegmentColor)
             {
                 playerSegment.segmentRenderer.material = inactiveMaterial;
                 this.platformRenderer.material = inactiveMaterial;

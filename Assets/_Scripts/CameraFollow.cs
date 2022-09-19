@@ -70,7 +70,9 @@ public class CameraFollow : MonoBehaviour
 
         Vector3 shiftVector = new Vector3(0, this.playerCharacter.transform.position.y - worldSpaceCenteredPosition.y, 0);
 
-        if (this.playerCharacter.playerRb.velocity.y != 0)
+        
+
+        if (CollisionObserver.IsMatchingCollisionFree())
         {
             this.cameraTransform.Translate(shiftVector.normalized * Mathf.Abs(this.playerCharacter.playerRb.velocity.y) * Time.fixedDeltaTime);
         }

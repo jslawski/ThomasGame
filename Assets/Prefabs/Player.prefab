@@ -290,6 +290,8 @@ MonoBehaviour:
   playerRb: {fileID: 0}
   moveSpeed: 5
   initialJumpForce: 0
+  residualJumpForce: 0
+  residualJumpTime: 0
   nudgeForce: 0
 --- !u!95 &1222897764045323522
 Animator:

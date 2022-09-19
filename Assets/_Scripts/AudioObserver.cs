@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum AudioTrigger { Rotate, Jump, Attach, Detach, Collide }
+public enum AudioTrigger { Rotate, Jump, Attach, Detach, Collide, Win }
 
 public class AudioObserver : MonoBehaviour
 {

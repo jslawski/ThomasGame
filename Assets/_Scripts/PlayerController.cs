@@ -11,15 +11,23 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Range(0, 50)]
     public float moveSpeed;
 
-    [SerializeField, Range(0, 10)]
+    [SerializeField, Range(0, 30)]
     private float initialJumpForce = 0f;
+    [SerializeField, Range(0, 100)]
+    private float residualJumpForce = 0f;
+    [SerializeField]
+    private float residualJumpTime = 0f;
 
-    [SerializeField, Range(0, 5)]
+    private Coroutine residualJumpCoroutine;
+
+    [SerializeField, Range(0, 30)]
     private float nudgeForce = 0f;
 
     private Dictionary<PlayerSegment, ObjectColor> segmentColors;
 
     private bool jumpNextFrame = false;
+
+    private bool isRotating = false;
 
     private Animator playerAnimator;
 
@@ -57,6 +65,8 @@ public class PlayerController : MonoBehaviour
 
     private void RotatePlayer(bool clockwise)
     {
+        this.isRotating = true;
+
         //Only rotate the player if they are currently in an "idle" state
         if (this.playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("IdleRedBottom") ||
             this.playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("IdleGreyBottom") ||
@@ -120,11 +130,24 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+        
         this.UpdateMoveVector();
 
         this.UpdateGravity();
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (this.playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("IdleRedBottom") ||
+            this.playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("IdleGreyBottom") ||
+            this.playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("IdleBlueBottom") ||
+            this.playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("IdlePurpleBottom"))
+        {
+            this.isRotating = false;
+        }
+
+            if (Input.GetKeyDown(KeyCode.Space))
         {
             this.jumpNextFrame = true;
         }
@@ -156,8 +179,6 @@ public class PlayerController : MonoBehaviour
         }
 
         this.playerRb.useGravity = true;
-
-        Debug.LogError("Using Gravity: " + this.playerRb.useGravity);
     }
 
     private void FixedUpdate()
@@ -259,15 +280,49 @@ public class PlayerController : MonoBehaviour
 
     private void JumpPlayer(Vector3 direction)
     {
-        this.playerRb.AddForce(direction * this.initialJumpForce, ForceMode.Impulse);
-        
+        this.playerRb.AddForce(direction * this.initialJumpForce, ForceMode.Impulse);        
+
+        if (direction == Vector3.up)
+        {
+            if (this.residualJumpCoroutine != null)
+            {
+                this.StopCoroutine(this.residualJumpCoroutine);
+            }
+
+            this.residualJumpCoroutine = this.StartCoroutine(this.ResidualJump());
+        }
+
         this.audioObserver.NotifyAudioTrigger(AudioTrigger.Jump);
+    }
+
+    private IEnumerator ResidualJump()
+    {
+        float jumpTime = 0.0f;        
+
+        while (jumpTime < this.residualJumpTime && Input.GetKey(KeyCode.Space) &&
+                CollisionObserver.ObjectIsCollidingWithAnyPlatform(this.segmentColors[PlayerSegment.Top]) == false &&
+                CollisionObserver.ObjectIsCollidingWithMatchingPlatform(this.segmentColors[PlayerSegment.Left]) == false &&
+                CollisionObserver.ObjectIsCollidingWithMatchingPlatform(this.segmentColors[PlayerSegment.Right]) == false)
+        {
+            this.ApplyResidualJump();
+            jumpTime += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+
+        this.playerRb.velocity = Vector3.zero;
+        this.residualJumpCoroutine = null;
+    }
+
+    private void ApplyResidualJump()
+    {
+        this.playerRb.AddForce(Vector3.up * this.residualJumpForce, ForceMode.Force);        
     }
 
     public void AttemptNudgePlayer()
     {
         if (CollisionObserver.ObjectIsCollidingWithAnyPlatform(this.segmentColors[PlayerSegment.Top]) ||
-            CollisionObserver.ObjectIsCollidingWithAnyPlatform(this.segmentColors[PlayerSegment.Bottom]))
+            CollisionObserver.ObjectIsCollidingWithAnyPlatform(this.segmentColors[PlayerSegment.Bottom]) ||
+            this.isRotating == true)
         {
             return;
         }
