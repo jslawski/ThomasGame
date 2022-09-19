@@ -286,7 +286,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  jumpForce: 10
+  initialJumpForce: 0
+  nudgeForce: 0
 --- !u!95 &1222897764045323522
 Animator:
   serializedVersion: 4

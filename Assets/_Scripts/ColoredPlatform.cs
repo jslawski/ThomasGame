@@ -7,6 +7,13 @@ public class ColoredPlatform : MonoBehaviour
 {
     public ObjectColor platformColor;
 
+    private MeshRenderer platformRenderer;
+
+    private void Awake()
+    {
+        this.platformRenderer = GetComponent<MeshRenderer>();
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.gameObject.tag == "Player")
@@ -24,9 +31,17 @@ public class ColoredPlatform : MonoBehaviour
             {
                 playerRb.velocity = new Vector3(0.0f, 0.0f, 0.0f);
             }
+
+            ColoredPlayerSegment playerSegment = collision.collider.gameObject.GetComponent<ColoredPlayerSegment>();
+
+            Material activeMaterial = Resources.Load<Material>("Materials/" + playerSegment.playerSegmentColor.ToString() + "/active");
+
+            if (this.platformColor == playerSegment.playerSegmentColor)
+            {
+                playerSegment.segmentRenderer.material = activeMaterial;
+                this.platformRenderer.material = activeMaterial;
+            }
         }
-        
-        //Debug.LogError(this.gameObject.name + " collides with " +collision.collider.gameObject.name);
     }
 
     private void OnCollisionExit(Collision collision)
@@ -37,8 +52,17 @@ public class ColoredPlatform : MonoBehaviour
 
             ObjectColor segmentColor = collision.collider.gameObject.GetComponent<ColoredPlayerSegment>().playerSegmentColor;
             CollisionObserver.NotifyCollisionChange(this.platformColor, segmentColor, false);
-        }
 
-        //Debug.LogError(this.gameObject.name + " EXITS " + collision.collider.gameObject.name);
+            ColoredPlayerSegment playerSegment = collision.collider.gameObject.GetComponent<ColoredPlayerSegment>();
+
+            Material inactiveMaterial = Resources.Load<Material>("Materials/" + playerSegment.playerSegmentColor.ToString() + "/inactive");
+
+
+            if (this.platformColor == playerSegment.playerSegmentColor)
+            {
+                playerSegment.segmentRenderer.material = inactiveMaterial;
+                this.platformRenderer.material = inactiveMaterial;
+            }
+        }
     }
 }
