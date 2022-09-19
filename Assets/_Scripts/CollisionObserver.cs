@@ -23,6 +23,14 @@ public static class CollisionObserver
         CollisionObserver.genericCollisionDict[ObjectColor.Purple] = false;
     }
 
+    public static void PrintDicts()
+    {
+        Debug.LogError("Blue\nMatching: " + CollisionObserver.matchingColorCollisionDict[ObjectColor.Blue] + " Generic: " + CollisionObserver.genericCollisionDict[ObjectColor.Blue] + 
+                       "\nGrey\nMatching: " + CollisionObserver.matchingColorCollisionDict[ObjectColor.Grey] + " Generic: " + CollisionObserver.genericCollisionDict[ObjectColor.Grey] +
+                       "\nRed\nMatching: " + CollisionObserver.matchingColorCollisionDict[ObjectColor.Red] + " Generic: " + CollisionObserver.genericCollisionDict[ObjectColor.Red] +
+                       "\nPurple\nMatching: " + CollisionObserver.matchingColorCollisionDict[ObjectColor.Purple] + " Generic: " + CollisionObserver.genericCollisionDict[ObjectColor.Purple]);
+    }
+
     public static bool ObjectIsCollidingWithMatchingPlatform(ObjectColor testObjectColor)
     {
         //Debug.LogError(testObjectColor + " is match colliding: " + CollisionObserver.matchingColorCollisionDict[testObjectColor]);

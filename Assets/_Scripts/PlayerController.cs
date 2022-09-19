@@ -13,8 +13,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Range(0, 50)]
     private float moveSpeed;
 
-    [SerializeField, Range(10, 50)]
-    private float jumpForce = 10;
+    [SerializeField, Range(0, 10)]
+    private float initialJumpForce = 0f;
+
+    [SerializeField, Range(0, 5)]
+    private float nudgeForce = 0f;
 
     private Dictionary<PlayerSegment, ObjectColor> segmentColors;
 
@@ -60,7 +63,7 @@ public class PlayerController : MonoBehaviour
         ObjectColor newBottom = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Bottom] + incrementer) % 4);
         ObjectColor newLeft = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Left] + incrementer) % 4);
 
-        Debug.LogError("NewTop: " + newTop + "\nNewRight: " + newRight + "\nNewBottom: " + newBottom + "\nNewLeft: " + newLeft);
+        //Debug.LogError("NewTop: " + newTop + "\nNewRight: " + newRight + "\nNewBottom: " + newBottom + "\nNewLeft: " + newLeft);
 
         this.segmentColors[PlayerSegment.Top] = newTop;
         this.segmentColors[PlayerSegment.Right] = newRight;
@@ -68,22 +71,6 @@ public class PlayerController : MonoBehaviour
         this.segmentColors[PlayerSegment.Left] = newLeft;
     }
 
-    /*
-    private void RotatePlayerCounterClockwise()
-    {
-        ObjectColor newTop = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Right] + 3) % 4);
-        ObjectColor newRight = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Bottom] + 3) % 4);
-        ObjectColor newBottom = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Left] + 3) % 4);
-        ObjectColor newLeft = (ObjectColor)((int)(this.segmentColors[PlayerSegment.Top] + 3) % 4);
-
-        this.segmentColors[PlayerSegment.Top] = newTop;
-        this.segmentColors[PlayerSegment.Right] = newRight;
-        this.segmentColors[PlayerSegment.Bottom] = newBottom;
-        this.segmentColors[PlayerSegment.Left] = newLeft;
-
-        //Play animation here
-    }
-    */
     private KeyCode GetInput()
     {                
         //First, prioritize the latest new key press
@@ -103,7 +90,6 @@ public class PlayerController : MonoBehaviour
         {
             return KeyCode.S;
         }
-
 
         //Next, prioritize the current key being pressed if it is still being held
         if (Input.GetKey(this.currentMoveKey))
@@ -149,6 +135,10 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             this.RotatePlayer(false);
+        }
+        if (Input.GetKeyUp(KeyCode.P))
+        {
+            CollisionObserver.PrintDicts();
         }
     }
 
@@ -237,15 +227,18 @@ public class PlayerController : MonoBehaviour
 
     private void MovePlayer(Vector3 direction)
     {
+        if (CollisionObserver.IsCollisionFree() == true &&
+            (direction == Vector3.left || direction == Vector3.right))
+        {
+            playerRb.velocity = new Vector3(0.0f, playerRb.velocity.y, 0.0f);
+        }
+
         Vector3 targetDestination = this.playerRb.position + (direction * this.moveSpeed * Time.fixedDeltaTime);
         this.playerRb.MovePosition(targetDestination);
     }
 
     private void AttemptJumpPlayer()
     {
-        Debug.LogError(this.segmentColors[PlayerSegment.Bottom]);
-
-
         if (CollisionObserver.IsCollisionFree() == true)
         {
             return;
@@ -261,28 +254,84 @@ public class PlayerController : MonoBehaviour
         }
         else if (CollisionObserver.ObjectIsCollidingWithMatchingPlatform(this.segmentColors[PlayerSegment.Right]))
         {
-            this.JumpPlayer(Vector3.left);
+            if (this.currentMoveKey == KeyCode.W)
+            {
+                this.JumpPlayer(new Vector3(-1.0f, 1.0f, 0.0f).normalized);
+            }
+            else if (this.currentMoveKey == KeyCode.S)
+            {
+                this.JumpPlayer(new Vector3(-1.0f, -1.0f, 0.0f).normalized);
+            }
+            else
+            {
+                this.JumpPlayer(Vector3.left);
+            }
         }
         else if (CollisionObserver.ObjectIsCollidingWithMatchingPlatform(this.segmentColors[PlayerSegment.Left]))
         {
-            this.JumpPlayer(Vector3.right);
+            if (this.currentMoveKey == KeyCode.W)
+            {
+                this.JumpPlayer(new Vector3(1.0f, 1.0f, 0.0f).normalized);
+            }
+            else if (this.currentMoveKey == KeyCode.S)
+            {
+                this.JumpPlayer(new Vector3(1.0f, -1.0f, 0.0f).normalized);
+            }
+            else
+            {
+                this.JumpPlayer(Vector3.right);
+            }
         }
     }
 
     private void JumpPlayer(Vector3 direction)
     {
-        this.playerRb.AddForce(direction * this.jumpForce, ForceMode.Impulse);
+        this.playerRb.AddForce(direction * this.initialJumpForce, ForceMode.Impulse);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public void AttemptNudgePlayer()
     {
-        if (CollisionObserver.IsMatchingCollisionFree())
+        if (CollisionObserver.ObjectIsCollidingWithAnyPlatform(this.segmentColors[PlayerSegment.Top]) ||
+            CollisionObserver.ObjectIsCollidingWithAnyPlatform(this.segmentColors[PlayerSegment.Bottom]))
         {
-            this.playerRb.velocity = new Vector3(0.0f, this.playerRb.velocity.y, 0.0f);
+            return;
         }
-        else
+
+            if (CollisionObserver.ObjectIsCollidingWithMatchingPlatform(this.segmentColors[PlayerSegment.Left]))
         {
-            this.playerRb.velocity = new Vector3(0.0f, 0.0f, 0.0f);
+            this.NudgePlayer(PlayerSegment.Left);
+        }
+        else if (CollisionObserver.ObjectIsCollidingWithMatchingPlatform(this.segmentColors[PlayerSegment.Right]))
+        {
+            this.NudgePlayer(PlayerSegment.Right);
+        }
+    }
+
+    private void NudgePlayer(PlayerSegment nudgedSegment)
+    {
+        Debug.LogError("Nudging");
+
+        if (nudgedSegment == PlayerSegment.Right)
+        {
+            if (this.currentMoveKey == KeyCode.W)
+            {
+                this.playerRb.AddForce(new Vector3(-1.0f, 1.0f, 0.0f).normalized * this.nudgeForce, ForceMode.Impulse);
+            }
+            else if (this.currentMoveKey == KeyCode.S)
+            {
+                this.playerRb.AddForce(new Vector3(-1.0f, -1.0f, 0.0f).normalized * this.nudgeForce, ForceMode.Impulse);
+            }            
+        }
+        else if (nudgedSegment == PlayerSegment.Left)
+        {
+            if (this.currentMoveKey == KeyCode.W)
+            {
+                this.playerRb.AddForce(new Vector3(1.0f, 1.0f, 0.0f).normalized * this.nudgeForce, ForceMode.Impulse);
+            }
+            else if (this.currentMoveKey == KeyCode.S)
+            {
+                this.playerRb.AddForce(new Vector3(1.0f, -1.0f, 0.0f).normalized * this.nudgeForce, ForceMode.Impulse);
+            }
         }
     }
 }

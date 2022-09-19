@@ -130,6 +130,34 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1718674461, guid: 30596710887f8cd48b5086dd0c857dc5, type: 3}
+      propertyPath: nudgeForce
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1718674461, guid: 30596710887f8cd48b5086dd0c857dc5, type: 3}
+      propertyPath: initialJumpForce
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1044677160726623775, guid: 30596710887f8cd48b5086dd0c857dc5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1044677160726623775, guid: 30596710887f8cd48b5086dd0c857dc5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1044677160726623775, guid: 30596710887f8cd48b5086dd0c857dc5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1044677160726623775, guid: 30596710887f8cd48b5086dd0c857dc5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1044677160726623775, guid: 30596710887f8cd48b5086dd0c857dc5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1308596649454065707, guid: 30596710887f8cd48b5086dd0c857dc5, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -501,7 +529,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1889789924998590014, guid: ba2f268fd616ba84e83743ec52d22e20, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.05
+      value: -7.61
       objectReference: {fileID: 0}
     - target: {fileID: 1889789924998590014, guid: ba2f268fd616ba84e83743ec52d22e20, type: 3}
       propertyPath: m_LocalPosition.y
