@@ -313,7 +313,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1889789924998590014, guid: 7bc44d6e05829c647ab06604fbac9c5b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.56
+      value: 0.62
       objectReference: {fileID: 0}
     - target: {fileID: 1889789924998590014, guid: 7bc44d6e05829c647ab06604fbac9c5b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -541,8 +541,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCharacter: {fileID: 86500613}
-  verticalViewportThreshold: 0.1
-  horizontalViewportThreshold: 0.5
+  upperVerticalViewportThreshold: 0.7
+  lowerVerticalViewportThreshold: 0.45
+  horizontalViewportThreshold: 0.4
 --- !u!1001 &1662907795
 PrefabInstance:
   m_ObjectHideFlags: 0
