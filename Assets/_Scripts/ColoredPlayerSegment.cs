@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ColoredPlayerSegment : MonoBehaviour
 {
-    public ObjectColor playerSegmentColor = ObjectColor.None;
+    public ObjectColor playerSegmentColor;
     /*
     private Collider segmentCollider;
 

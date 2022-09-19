@@ -110,7 +110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b00408f176b86c4f8f027fbed6ad9a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSegmentColor: 0
+  playerSegmentColor: 2
 --- !u!1 &4372621418584401576
 GameObject:
   m_ObjectHideFlags: 0
@@ -221,7 +221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b00408f176b86c4f8f027fbed6ad9a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSegmentColor: 3
+  playerSegmentColor: 1
 --- !u!1 &6118875649976307124
 GameObject:
   m_ObjectHideFlags: 0
@@ -430,7 +430,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b00408f176b86c4f8f027fbed6ad9a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSegmentColor: 1
+  playerSegmentColor: 0
 --- !u!1 &9207906499484711628
 GameObject:
   m_ObjectHideFlags: 0
@@ -541,4 +541,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b00408f176b86c4f8f027fbed6ad9a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSegmentColor: 2
+  playerSegmentColor: 3

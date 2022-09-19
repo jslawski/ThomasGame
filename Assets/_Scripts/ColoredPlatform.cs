@@ -5,15 +5,7 @@ using UnityEngine;
 
 public class ColoredPlatform : MonoBehaviour
 {
-    public ObjectColor platformColor = ObjectColor.None;
-
-    private CollisionObserver collisionObserver;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        this.collisionObserver = GameObject.Find("CollisionObserver").GetComponent<CollisionObserver>();
-    }
+    public ObjectColor platformColor;
 
     // Update is called once per frame
     void Update()
@@ -26,10 +18,10 @@ public class ColoredPlatform : MonoBehaviour
         if (collision.collider.gameObject.tag == "Player")
         {
             ObjectColor segmentColor = collision.collider.gameObject.GetComponent<ColoredPlayerSegment>().playerSegmentColor;
-            this.collisionObserver.NotifyCollisionChange(this.platformColor, segmentColor, true);
+            CollisionObserver.NotifyCollisionChange(this.platformColor, segmentColor, true);
         }
         
-        //Debug.LogError(this.gameObject.name + " collides with " +collision.collider.gameObject.name);
+        Debug.LogError(this.gameObject.name + " collides with " +collision.collider.gameObject.name);
     }
 
     private void OnCollisionExit(Collision collision)
@@ -37,7 +29,9 @@ public class ColoredPlatform : MonoBehaviour
         if (collision.collider.gameObject.tag == "Player")
         {
             ObjectColor segmentColor = collision.collider.gameObject.GetComponent<ColoredPlayerSegment>().playerSegmentColor;
-            this.collisionObserver.NotifyCollisionChange(this.platformColor, segmentColor, false);
+            CollisionObserver.NotifyCollisionChange(this.platformColor, segmentColor, false);
         }
+
+        Debug.LogError(this.gameObject.name + " EXITS " + collision.collider.gameObject.name);
     }
 }
